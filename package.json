@@ -1,0 +1,10 @@
+{
+  "name": "library-rest-api",
+  "version": "0.0.1",
+  "description": "A simple library REST api",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "express": "~3.1.0",
+    "mongoose": "^4.8.5"
+  }
+}

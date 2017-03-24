@@ -1,0 +1,105 @@
+<html lang = "en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">  
+<title> NAICS code off zipcode</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css">  
+<style type = "text/css">
+#Alex_table
+{
+}
+</style> 
+
+</head>  
+<body>
+
+<br />
+<!-- to display insert box -->
+<div class="container">     
+  <h2>Zipcode</h2>  
+  <form class="form-inline" role="form">  
+    <form style="width:300px">  
+  <div class="form-group">  
+    <label for="exampleInputEmail1"></label>  
+    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Zipcode">  
+  </div>  
+     
+  <button type="submit" class="btn btn-primary">Go</button>  
+	  </form> 
+</form>
+</div>
+
+
+<!-- where the table to display desired codes are-->
+<div class="container">  
+
+<table class="table" id = "Alex_table" >  
+  <tr><th>NAICS CODE</th><th># of business</th></tr>  
+  <tr><td>101</td><td>Rahul</td></tr>  
+  <tr><td>102</td><td>Umesh</td></tr>  
+  <tr><td>103</td><td>Max</td></tr>  
+  <tr><td>104</td><td>Ajeet</td></tr>  
+</table>  
+</div>    
+
+
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+d3.json("http://demeter.availabs.org:3000/API/geobyzip/12203", function(error, zipcode) {
+  if (error) return console.error(zipcode);
+
+console.log(zipcode);
+  
+  var counter;
+  var zip = zipcode.data;
+  var types = {};
+  	
+  for(i = 0; i < zip.length; i++) {
+
+    var code = zip[i].NAICSCD
+
+    if (types[code]) {
+      types[code]++;
+    } else {
+      types[code] = 1;
+    }
+	  }
+
+  var _sum = Object.keys(types).reduce(function (sum, k) {
+  
+    var val = types[k]
+  
+    if (val) {
+      sum += val
+    }
+
+    return sum
+  }, 0)
+
+  //console.log(types)
+
+  var display = document.getElementById("Alex_table");
+  var items =  types;
+
+  display.innerHTML += items;
+  for(i = 0; i < types.length; i++) {
+      display.innerHTML += items[1];
+      }
+
+
+  
+});
+
+
+
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> 
+ <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>    
+    
+    
+    
+    
