@@ -27,7 +27,7 @@ td:hover {
 </style> 
 
 </head>  
-<body>
+<body style= "background-color:black; color:white;">
 
 <br />
 <!-- to display insert box -->
@@ -36,11 +36,11 @@ td:hover {
   <form class="form-inline" role="form">  
     <form style="width:300px">  
   <div class="form-group">  
-    <label for="exampleInputEmail1"></label>  
-    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Zipcode">  
+    <label ></label>  
+    <input type = "text" class="form-control" id="search" placeholder="Zipcode">  
   </div>  
      
-  <button type="submit" class="btn btn-primary">Go</button>  
+    <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip();" value = "Go">  
 	  </form> 
 </form>
 </div>
@@ -60,7 +60,18 @@ td:hover {
 <script src="//d3js.org/topojson.v1.min.js"></script>
 <script>
 
-d3.json("http://demeter.availabs.org:3000/API/geobyzip/12203", function(error, zipcode) {
+
+
+function getZip() {
+    var query = document.getElementById("search");
+    var area = query.value;
+    var query_string;
+    query_string = "http://demeter.availabs.org:3000/API/geobyzip/" + area;
+    console.log(query_string);
+
+
+
+d3.json(query_string, function(error, zipcode) {
   if (error) return console.error(zipcode);
 
 console.log(zipcode);
@@ -68,19 +79,24 @@ console.log(zipcode);
   var counter;
   var zip = zipcode.data;
   var types = {};
-  	
+  	var sum = 0;
   for(i = 0; i < zip.length; i++) {
 
     var code = zip[i].NAICSCD;
 
     if (types[code]) {
       types[code]++;
-    } else {
+      sum++;
+    } 
+    else {
       types[code] = 1;
+      sum ++;
     }
 	  }
+ 
+  console.log(sum);
 
-  var _sum = Object.keys(types).reduce(function (sum, k) {
+  /*var _sum = Object.keys(types).reduce(function (sum, k) {
   
     var val = types[k]
   
@@ -89,31 +105,34 @@ console.log(zipcode);
     }
 
     return sum
-  }, 0)
+  }, 0) */
 
 // using shadowDOM didnt work
-
+  var array_i = 0;  //for refresing
+  var array_ii = 0; 
   var display_i =document.querySelector("#Alex_table");
   var display_ii = document.querySelector("#Alex_choices");
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
-
+  
 
   console.log(businesses);
+  for(i = 1; i < items.length; i++) {
+      array_i += "<tr><td>" +items[i] +"</td>" + "<br />";
+
+      }
+      display_i.innerHTML = array_i
   for(i = 0; i < items.length; i++) {
-      display_i.innerHTML += "<tr><td>" +items[i] +"</td>" + "<br />";
+      array_ii += "<td>" + businesses[i] + "</td></tr><br />";
       
       }
-  for(i = 0; i < items.length; i++) {
-      display_ii.innerHTML += "<td>" + businesses[i] + "</td></tr><br />";
-      
-      }
+      display_ii.innerHTML = array_ii;
 
 console.log( document.styleSheets[0]); 
   
 });
 
-
+}
 
 
 </script>
