@@ -108,13 +108,13 @@ console.log(zipcode);
   }, 0) */
 
 // using shadowDOM didnt work
-  var array_i = 0;  //for refresing
-  var array_ii = 0; 
+  
   var display_i =document.querySelector("#Alex_table");
   var display_ii = document.querySelector("#Alex_choices");
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
-  
+  var array_i = items[0] + "<br />";  //for refresing
+  var array_ii = businesses[0] + "<br />"; 
 
   console.log(businesses);
   for(i = 1; i < items.length; i++) {
