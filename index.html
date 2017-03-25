@@ -2,10 +2,27 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">  
 <title> NAICS code off zipcode</title>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css">  
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" >  
 <style type = "text/css">
+
+
 #Alex_table
 {
+@import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
+}
+td {  
+
+  opacity: 1;
+  transition: opacity 420ms ease-in-out;
+}
+td:hover {
+  opacity: .5;
+}
+
+
+#Alex_choices
+{
+@import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
 }
 </style> 
 
@@ -32,12 +49,9 @@
 <!-- where the table to display desired codes are-->
 <div class="container">  
 
-<table class="table" id = "Alex_table" >  
-  <tr><th>NAICS CODE</th><th># of business</th></tr>  
-  <tr><td>101</td><td>Rahul</td></tr>  
-  <tr><td>102</td><td>Umesh</td></tr>  
-  <tr><td>103</td><td>Max</td></tr>  
-  <tr><td>104</td><td>Ajeet</td></tr>  
+<table class="table"  >  
+<tr><th>NAICS CODE<br /></th><th># of business <br /></th></tr>  
+  <tr ><td id = "Alex_table"></td><td id = "Alex_choices"></td></tr>   
 </table>  
 </div>    
 
@@ -57,7 +71,7 @@ console.log(zipcode);
   	
   for(i = 0; i < zip.length; i++) {
 
-    var code = zip[i].NAICSCD
+    var code = zip[i].NAICSCD;
 
     if (types[code]) {
       types[code]++;
@@ -77,17 +91,25 @@ console.log(zipcode);
     return sum
   }, 0)
 
-  //console.log(types)
+// using shadowDOM didnt work
 
-  var display = document.getElementById("Alex_table");
-  var items =  types;
+  var display_i =document.querySelector("#Alex_table");
+  var display_ii = document.querySelector("#Alex_choices");
+  var items =  Object.keys(types);
+  var businesses =Object.keys(types).map(function(key){return types[key]});
 
-  display.innerHTML += items;
-  for(i = 0; i < types.length; i++) {
-      display.innerHTML += items[1];
+
+  console.log(businesses);
+  for(i = 0; i < items.length; i++) {
+      display_i.innerHTML += "<tr><td>" +items[i] +"</td>" + "<br />";
+      
+      }
+  for(i = 0; i < items.length; i++) {
+      display_ii.innerHTML += "<td>" + businesses[i] + "</td></tr><br />";
+      
       }
 
-
+console.log( document.styleSheets[0]); 
   
 });
 
