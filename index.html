@@ -126,30 +126,45 @@ console.log(zipcode);
   var properties = new Array(); 
   //console.log(types);
     
-  for(i = 1; i < counter; i++) {
-      array_i[i] = items[i];
-
+  for(i = 0; i < counter; i++) {
+      properties[i] = new Array();
+      properties[i][0] = items[i] ;
+      properties[i][1] =  items[counter+i];
+      properties[i][2] =  businesses[i];
       }
       //display_i.innerHTML = array_i
+  //console.log(properties);
+  
+  properties.sort(function(a,b) {
+
+      return b[2] - a[2];
+  });
+  /* var bubble_sort = function(a,b,c,d) {
+  d = 0;
+  if (d = 1){
+    bubble(
+  }    
   for(i = 0; i < counter; i++) {
-      array_ii[i] =  businesses[i];
-      
-      }
-      //display_ii.innerHTML = array_ii;
+      if (i != 0) {
+        if (properties[i][2] > properties[i-1][2]) {
+          var temp = properties[i];
+          properties[i] = properties[i-1];
+          properties[i-1] = temp;
+        }
+      }    
+  } */
+    
+  console.log(properties); 
     
   for(i = 0; i < counter; i++) {
-      array_iii[i] =  items[counter+i];
-      
-      }
-      //display_iii.innerHTML = array_iii;
+  array_i += properties[i][0] + "<br />";
+  array_iii += properties[i][1] + "<br />";
+  array_ii += properties[i][2] + "<br />";
+  }    
    
-   var sort_data = { 
-        properties : { NAICSCD: array_i,
-                       NAICSDS: array_iii,
-                       counts: array_ii,
-                     }
-    }    
-  console.log(sort_data.properties); 
+  display_i.innerHTML = array_i;
+  display_iii.innerHTML= array_iii;
+  display_ii.innerHTML= array_ii;
 
 console.log( document.styleSheets[0]); 
   
