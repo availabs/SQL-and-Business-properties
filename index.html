@@ -19,6 +19,9 @@ td:hover {
   opacity: .5;
 }
 
+#Alex_names
+{
+}    
 
 #Alex_choices
 {
@@ -50,8 +53,8 @@ td:hover {
 <div class="container">  
 
 <table class="table"  >  
-<tr><th>NAICS CODE<br /></th><th># of business <br /></th></tr>  
-  <tr ><td id = "Alex_table"></td><td id = "Alex_choices"></td></tr>   
+<tr><th>NAICS CODE<br /></th><th>NAICS name<br /></th><th># of business <br /></th></tr>  
+  <tr ><td id = "Alex_table"></td><td id = "Alex_names"></td><td id = "Alex_choices"></td></tr>   
 </table>  
 </div>    
 
@@ -76,13 +79,14 @@ d3.json(query_string, function(error, zipcode) {
 
 console.log(zipcode);
   
-  var counter;
+  var counter = 0;
   var zip = zipcode.data;
   var types = {};
   	var sum = 0;
   for(i = 0; i < zip.length; i++) {
 
     var code = zip[i].NAICSCD;
+    var name = zip[i].NAICSDS;
 
     if (types[code]) {
       types[code]++;
@@ -90,7 +94,9 @@ console.log(zipcode);
     } 
     else {
       types[code] = 1;
+      types[name] = 1;  
       sum ++;
+      counter++;  
     }
 	  }
  
@@ -108,25 +114,42 @@ console.log(zipcode);
   }, 0) */
 
 // using shadowDOM didnt work
-  
+  var cases =0;
   var display_i =document.querySelector("#Alex_table");
-  var display_ii = document.querySelector("#Alex_choices");
+  var display_ii = document.querySelector("#Alex_choices");  
+  var display_iii = document.querySelector("#Alex_names");
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
-  var array_i = items[0] + "<br />";  //for refresing
-  var array_ii = businesses[0] + "<br />"; 
-
-  console.log(businesses);
-  for(i = 1; i < items.length; i++) {
-      array_i += "<tr><td>" +items[i] +"</td>" + "<br />";
+  var array_i = new Array() ;  //for refresing
+  var array_ii = new Array()  ; 
+  var array_iii = new Array()  ;
+  var properties = new Array(); 
+  //console.log(types);
+    
+  for(i = 1; i < counter; i++) {
+      array_i[i] = items[i];
 
       }
-      display_i.innerHTML = array_i
-  for(i = 0; i < items.length; i++) {
-      array_ii += "<td>" + businesses[i] + "</td></tr><br />";
+      //display_i.innerHTML = array_i
+  for(i = 0; i < counter; i++) {
+      array_ii[i] =  businesses[i];
       
       }
-      display_ii.innerHTML = array_ii;
+      //display_ii.innerHTML = array_ii;
+    
+  for(i = 0; i < counter; i++) {
+      array_iii[i] =  items[counter+i];
+      
+      }
+      //display_iii.innerHTML = array_iii;
+   
+   var sort_data = { 
+        properties : { NAICSCD: array_i,
+                       NAICSDS: array_iii,
+                       counts: array_ii,
+                     }
+    }    
+  console.log(sort_data.properties); 
 
 console.log( document.styleSheets[0]); 
   
