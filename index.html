@@ -73,7 +73,8 @@ td:hover {
 
 var properties = new Array();                          //global variables
 var display_i =document.querySelector("#Alex_table");
-
+var display_ii = document.querySelector("#Alex_choices");  
+var display_iii = document.querySelector("#Alex_names");
 
 function getZip() {
     var query = document.getElementById("search");
@@ -125,8 +126,6 @@ console.log(zipcode);
 
 // using shadowDOM didnt work
   var cases =0;
-  var display_ii = document.querySelector("#Alex_choices");  
-  var display_iii = document.querySelector("#Alex_names");
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
   var array_i = new Array() ;  //for refresing
@@ -185,24 +184,60 @@ console.log(properties);
 
 function sort_by_two () {
 
-  properties.innerHTML;
-  var two_prop = {};
+  var two_prop = {};                           //if alex only wants values
+  var two_display = properties;                //if alex wants new table
+  var counter = 0;
+  for(i = 0; i < two_display.length; i++) {
+    two_display[i][0] = two_display[i][0].slice(0,2) 
+  }
   
+  two_display.sort(function(a,b) {
+
+      return a[0] - b[0];
+  });
+  
+  
+  
+  console.log(two_display);
 
   for(i = 0; i < properties.length; i++) {
    
-     
+    var code = properties[i][0].slice(0,2);     
+    var total_count = properties[i][2];
 
-    if (properties[i][0]) {
-      two_prop[i]++;
-
+    if (two_prop[code]) {
+        two_prop[code]  += total_count;
     } 
     else {
-      two_prop[i] = properties[i][0];  
+        two_prop[code]  = total_count
+        counter++;
     }
-	  }
+  }
     console.log(two_prop);
-
+  
+  var item =  Object.keys(two_prop);
+  var business =Object.keys(two_prop).map(function(key){return two_prop[key]});
+  var array_i = new Array() ;  //for refresing
+  var array_ii = new Array()  ;
+  
+  
+  for(i = 0; i < counter; i++) {
+    array_i += item[i] + "<br />";
+    array_ii += business[i] + "<br />";
+  }
+  
+  display_i.innerHTML = array_i;
+  display_ii.innerHTML= array_ii;
+  display_iii.innerHTML = "";
+  
+  for(i = 0; i < two_display.length; i++) {
+  
+  }
+  display_i.innerHTML = array_i;
+  display_ii.innerHTML= array_ii;
+  display_iii.innerHTML = "";   
+  
+  
 
 };
 </script>
