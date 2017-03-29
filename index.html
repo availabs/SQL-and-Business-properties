@@ -43,14 +43,18 @@ td:hover {
     <input type = "text" class="form-control" id="search" placeholder="Zipcode">  
   </div>  
      
-    <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip();" value = "Go">  
+    <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(8);" value = "Go">  
 	  </form> 
 </form>
 </div>
 
 <div class="container"> 
-<input type="button" class="btn btn-primary" id = "btn" onclick ="sort_by_two();" value = "2 digit">
+<input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(2);" value = "2 digit">
+<input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(4);" value = "4 digit">
+<input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(6);" value = "6 digit">
 </div>
+
+
 <br />
 <br />
 
@@ -76,7 +80,7 @@ var display_i =document.querySelector("#Alex_table");
 var display_ii = document.querySelector("#Alex_choices");  
 var display_iii = document.querySelector("#Alex_names");
 
-function getZip() {
+function getZip(a) {
     var query = document.getElementById("search");
     var area = query.value;
     var query_string;
@@ -177,23 +181,43 @@ console.log(zipcode);
   display_iii.innerHTML= array_iii;
   display_ii.innerHTML= array_ii;
 
+if (a == 2) {                     //choices
+sort_by(2);
+}
 
-  
+if (a == 4) {                     //choices
+sort_by(4);
+}
+
+if (a == 6) {                     //choices
+sort_by(6);
+}
+
 });
 
 }
 /* alex now needs you to make buttons for 2,4,6,8 digit NAICS code and have them descend */
 console.log(properties);
 
-function sort_by_two () {
+function sort_by (a) {
 
   var two_prop = {};                           //if alex only wants values
   var two_display = properties;                //if alex wants new table
   var counter = 0;
   for(i = 0; i < two_display.length; i++) {
-    two_display[i][0] = two_display[i][0].slice(0,2) 
+    if(a == 2) {
+    two_display[i][0] = two_display[i][0].slice(0,2)
+    }
+    if(a == 4) {
+    two_display[i][0] = two_display[i][0].slice(0,4)
+    }
+    if(a == 6) {
+    two_display[i][0] = two_display[i][0].slice(0,6)
+    }
+    
   }
   
+
   two_display.sort(function(a,b) {
 
       return a[0] - b[0];
@@ -205,9 +229,17 @@ function sort_by_two () {
 
   for(i = 0; i < properties.length; i++) {
    
-    var code = properties[i][0].slice(0,2);     
     var total_count = properties[i][2];
-
+    if(a == 2) {
+    var code = properties[i][0].slice(0,2);
+    }
+    if(a == 4) {
+    var code = properties[i][0].slice(0,4);
+    }
+    if(a == 6) {
+    var code = properties[i][0].slice(0,6);
+    }
+    
     if (two_prop[code]) {
         two_prop[code]  += total_count;
     } 
@@ -276,6 +308,8 @@ function sort_by_two () {
   
 
 };
+
+
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> 
  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
