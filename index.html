@@ -21,6 +21,10 @@ td:hover {
 
 #Alex_names
 {
+
+text-transform: capitalize;
+
+
 }    
 
 #Alex_choices
@@ -64,7 +68,7 @@ td:hover {
 
 <table class="table"  >  
 <tr><th>NAICS CODE<br /></th><th>NAICS name<br /></th><th># of business <br /></th></tr>  
-  <tr ><td id = "Alex_table"></td><td id = "Alex_names"></td><td id = "Alex_choices"></td></tr>   
+  <tr ><td id = "Alex_table"></td><td id = "Alex_names" class="capitalized"></td><td id = "Alex_choices"></td></tr>   
 </table>  
 </div>    
 
@@ -178,7 +182,7 @@ console.log(zipcode);
   }    
    
   display_i.innerHTML = array_i;
-  display_iii.innerHTML= array_iii;
+  display_iii.innerHTML= array_iii.toLowerCase();
   display_ii.innerHTML= array_ii;
 
 if (a == 2) {                     //choices
@@ -293,7 +297,7 @@ function sort_by (a) {
   
   display_i.innerHTML = array_i;
   display_ii.innerHTML= array_ii;
-  display_iii.innerHTML = array_iii;
+  display_iii.innerHTML = array_iii.toLowerCase();
   
   /*for(i = 0; i < two_display.length; i++) {
     array_i += two_display[i][0] + "<br />";
