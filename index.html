@@ -48,6 +48,12 @@ td:hover {
 </form>
 </div>
 
+<div class="container"> 
+<input type="button" class="btn btn-primary" id = "btn" onclick ="sort_by_two();" value = "2 digit">
+</div>
+<br />
+<br />
+
 
 <!-- where the table to display desired codes are-->
 <div class="container">  
@@ -63,6 +69,10 @@ td:hover {
 <script src="//d3js.org/topojson.v1.min.js"></script>
 <script>
 
+
+
+var properties = new Array();                          //global variables
+var display_i =document.querySelector("#Alex_table");
 
 
 function getZip() {
@@ -82,7 +92,7 @@ console.log(zipcode);
   var counter = 0;
   var zip = zipcode.data;
   var types = {};
-  	var sum = 0;
+  var sum = 0;
   for(i = 0; i < zip.length; i++) {
 
     var code = zip[i].NAICSCD;
@@ -100,7 +110,7 @@ console.log(zipcode);
     }
 	  }
  
-  console.log(sum);
+  console.log(counter);
 
   /*var _sum = Object.keys(types).reduce(function (sum, k) {
   
@@ -115,7 +125,6 @@ console.log(zipcode);
 
 // using shadowDOM didnt work
   var cases =0;
-  var display_i =document.querySelector("#Alex_table");
   var display_ii = document.querySelector("#Alex_choices");  
   var display_iii = document.querySelector("#Alex_names");
   var items =  Object.keys(types);
@@ -123,7 +132,7 @@ console.log(zipcode);
   var array_i = new Array() ;  //for refresing
   var array_ii = new Array()  ; 
   var array_iii = new Array()  ;
-  var properties = new Array(); 
+
   //console.log(types);
     
   for(i = 0; i < counter; i++) {
@@ -166,13 +175,36 @@ console.log(zipcode);
   display_iii.innerHTML= array_iii;
   display_ii.innerHTML= array_ii;
 
-console.log( document.styleSheets[0]); 
+
   
 });
 
 }
 /* alex now needs you to make buttons for 2,4,6,8 digit NAICS code and have them descend */
+console.log(properties);
 
+function sort_by_two () {
+
+  properties.innerHTML;
+  var two_prop = {};
+  
+
+  for(i = 0; i < properties.length; i++) {
+   
+     
+
+    if (properties[i][0]) {
+      two_prop[i]++;
+
+    } 
+    else {
+      two_prop[i] = properties[i][0];  
+    }
+	  }
+    console.log(two_prop);
+
+
+};
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> 
  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
