@@ -12,11 +12,11 @@
 }
 td {  
 
-  opacity: 1;
+  opacity: .5;
   transition: opacity 420ms ease-in-out;
 }
 td:hover {
-  opacity: .5;
+  opacity: 1;
 }
 
 #Alex_names
@@ -166,6 +166,9 @@ console.log(zipcode);
     
   for(i = 0; i < counter; i++) {
   array_i += properties[i][0] + "<br />";
+  if(properties[i][1] == null) {
+    properties[i][1] = "OTHER BUSINESS";
+  }
   array_iii += properties[i][1] + "<br />";
   array_ii += properties[i][2] + "<br />";
   }    
@@ -218,24 +221,57 @@ function sort_by_two () {
   var item =  Object.keys(two_prop);
   var business =Object.keys(two_prop).map(function(key){return two_prop[key]});
   var array_i = new Array() ;  //for refresing
-  var array_ii = new Array()  ;
+  var array_ii = new Array();
+  var array_iii = new Array();
   
   
-  for(i = 0; i < counter; i++) {
+  /*for(i = 0; i < counter; i++) {             //display options
     array_i += item[i] + "<br />";
     array_ii += business[i] + "<br />";
+    array_iii += "<br />"
   }
   
   display_i.innerHTML = array_i;
   display_ii.innerHTML= array_ii;
-  display_iii.innerHTML = "";
+  display_iii.innerHTML = ""; */
   
+  array_i += two_display[0][0] + "<br />";
+  array_ii += business[0] + "<br />";
+  /*for(i = 0; i < counter; i++) {
+    array_ii += business[i] + "<br />";
+    
+  
+  }*/
+  counter = 1;
   for(i = 0; i < two_display.length; i++) {
-  
+    if (i != 0) {
+        if(two_display[i-1][0] != two_display[i][0]) {
+            array_i += two_display[i][0] + "<br />";
+            array_ii += business[counter] + "<br />";  
+            counter++;                                        
+        }
+        else {
+            array_i += "<br />"
+            array_ii += "<br />"
+        }
+    }
+
+    array_iii += two_display[i][1] +"<br />"
   }
+  
   display_i.innerHTML = array_i;
   display_ii.innerHTML= array_ii;
-  display_iii.innerHTML = "";   
+  display_iii.innerHTML = array_iii;
+  
+  /*for(i = 0; i < two_display.length; i++) {
+    array_i += two_display[i][0] + "<br />";
+    array_iii += two_display[i][1] + "<br />";
+    array_ii += two_display[i][2] + "<br />";
+  
+  }
+  display_i.innerHTML += array_i;
+  display_ii.innerHTML += array_ii;
+  display_iii.innerHTML += array_iii; */   
   
   
 
