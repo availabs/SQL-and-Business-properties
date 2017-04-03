@@ -1,0 +1,9 @@
+add to api
+get lat and long data
+take data, make a geo json object by looping
+add geojson object to left
+set view of bounding box and throw your map in there
+geojson.io, feature collection
+geojson - name,NAICS code
+color based off NAICS code
+size by # of employees

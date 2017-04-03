@@ -1,8 +1,10 @@
 <html lang = "en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">  
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title> NAICS code off zipcode</title>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" >  
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 <style type = "text/css">
 
 
@@ -10,7 +12,7 @@
 {
 @import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
 }
-td {  
+td {
 
   opacity: .5;
   transition: opacity 420ms ease-in-out;
@@ -25,34 +27,34 @@ td:hover {
 text-transform: capitalize;
 
 
-}    
+}
 
 #Alex_choices
 {
 @import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
 }
-</style> 
+</style>
 
-</head>  
+</head>
 <body style= "background-color:black; color:white;">
 
 <br />
 <!-- to display insert box -->
-<div class="container">     
-  <h2>Zipcode</h2>  
-  <form class="form-inline" role="form">  
-    <form style="width:300px">  
-  <div class="form-group">  
-    <label ></label>  
-    <input type = "text" class="form-control" id="search" placeholder="Zipcode">  
-  </div>  
+<div class="container">
+  <h2>Zipcode</h2>
+  <form class="form-inline" role="form">
+    <form style="width:300px">
+  <div class="form-group">
+    <label ></label>
+    <input type = "text" class="form-control" id="search" placeholder="Zipcode">
+  </div>
      
-    <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(8);" value = "Go">  
-	  </form> 
+    <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(8);" value = "Go">
+	  </form>
 </form>
 </div>
 
-<div class="container"> 
+<div class="container">
 <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(2);" value = "2 digit">
 <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(4);" value = "4 digit">
 <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(6);" value = "6 digit">
@@ -64,14 +66,15 @@ text-transform: capitalize;
 
 
 <!-- where the table to display desired codes are-->
-<div class="container">  
+<div class="container">
 
-<table class="table"  >  
-<tr><th>NAICS CODE<br /></th><th>NAICS name<br /></th><th># of business <br /></th></tr>  
-  <tr ><td id = "Alex_table"></td><td id = "Alex_names" class="capitalized"></td><td id = "Alex_choices"></td></tr>   
-</table>  
-</div>    
+<table class="table"  >
+<tr><th>NAICS CODE<br /></th><th>NAICS name<br /></th><th># of business <br /></th></tr>
+  <tr ><td id = "Alex_table"></td><td id = "Alex_names" class="capitalized"></td><td id = "Alex_choices"></td></tr>
+</table>
+</div>
 
+<div id="mapid" style ="height:500px;"></div>
 
 <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="//d3js.org/topojson.v1.min.js"></script>
@@ -81,12 +84,24 @@ text-transform: capitalize;
 
 var properties = new Array();                          //global variables
 var display_i =document.querySelector("#Alex_table");
-var display_ii = document.querySelector("#Alex_choices");  
+var display_ii = document.querySelector("#Alex_choices");
 var display_iii = document.querySelector("#Alex_names");
-
+var query = document.getElementById("search");
+var keep;
+var geo = {
+  "type": "FeatureCollection",
+  "features": []
+  }
+var plots = new Array();
+  
 function getZip(a) {
+    
     var query = document.getElementById("search");
     var area = query.value;
+    if(area != keep){
+        properties = new Array();
+    }
+    keep = area;
     var query_string;
     query_string = "http://demeter.availabs.org:3000/API/geobyzip/" + area;
     console.log(query_string);
@@ -96,30 +111,44 @@ function getZip(a) {
 d3.json(query_string, function(error, zipcode) {
   if (error) return console.error(zipcode);
 
-console.log(zipcode);
+
   
   var counter = 0;
   var zip = zipcode.data;
   var types = {};
   var sum = 0;
+//console.log(zip);
+//console.log(plots);
   for(i = 0; i < zip.length; i++) {
 
     var code = zip[i].NAICSCD;
     var name = zip[i].NAICSDS;
-
-    if (types[code]) {
+    var dots = zip[i].st_asgeojson;
+    var dot = dots.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");
+    var feature = {};
+    feature.geometry = dots;
+    feature.properties = {name: name, code: code}
+    geo.features.push(feature)
+    if (types[code] ) {
       types[code]++;
+      plots.push(new Array(name,dot)) ;
       sum++;
-    } 
+    }
     else {
       types[code] = 1;
-      types[name] = 1;  
+      types[name] = 1;
+      plots[i]= new Array (name,dot);
       sum ++;
-      counter++;  
+      counter++;
     }
 	  }
- 
-  console.log(counter);
+console.log(geo);
+console.log(types);
+console.log(plots);
+// coords = geo.features[2].geometry.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");          //for geoJSON geographies
+// coords = plots[0];
+// console.log(coords);
+  //console.log(counter);
 
   /*var _sum = Object.keys(types).reduce(function (sum, k) {
   
@@ -137,7 +166,7 @@ console.log(zipcode);
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
   var array_i = new Array() ;  //for refresing
-  var array_ii = new Array()  ; 
+  var array_ii = new Array()  ;
   var array_iii = new Array()  ;
 
   //console.log(types);
@@ -159,7 +188,7 @@ console.log(zipcode);
   d = 0;
   if (d = 1){
     bubble(
-  }    
+  }
   for(i = 0; i < counter; i++) {
       if (i != 0) {
         if (properties[i][2] > properties[i-1][2]) {
@@ -167,10 +196,10 @@ console.log(zipcode);
           properties[i] = properties[i-1];
           properties[i-1] = temp;
         }
-      }    
+      }
   } */
     
-  console.log(properties); 
+  //console.log(properties);
     
   for(i = 0; i < counter; i++) {
   array_i += properties[i][0] + "<br />";
@@ -179,11 +208,15 @@ console.log(zipcode);
   }
   array_iii += properties[i][1] + "<br />";
   array_ii += properties[i][2] + "<br />";
-  }    
+  }
    
   display_i.innerHTML = array_i;
   display_iii.innerHTML= array_iii.toLowerCase();
   display_ii.innerHTML= array_ii;
+  
+  //console.log(array_i.length);
+
+plot(plots);                      // to render data on map
 
 if (a == 2) {                     //choices
 sort_by(2);
@@ -197,10 +230,14 @@ if (a == 6) {                     //choices
 sort_by(6);
 }
 
+
 });
 
+
+ 
 }
-/* alex now needs you to make buttons for 2,4,6,8 digit NAICS code and have them descend */
+
+
 console.log(properties);
 
 function sort_by (a) {
@@ -246,7 +283,7 @@ function sort_by (a) {
     
     if (two_prop[code]) {
         two_prop[code]  += total_count;
-    } 
+    }
     else {
         two_prop[code]  = total_count
         counter++;
@@ -283,8 +320,8 @@ function sort_by (a) {
     if (i != 0) {
         if(two_display[i-1][0] != two_display[i][0]) {
             array_i += two_display[i][0] + "<br />";
-            array_ii += business[counter] + "<br />";  
-            counter++;                                        
+            array_ii += business[counter] + "<br />";
+            counter++;
         }
         else {
             array_i += "<br />"
@@ -307,18 +344,75 @@ function sort_by (a) {
   }
   display_i.innerHTML += array_i;
   display_ii.innerHTML += array_ii;
-  display_iii.innerHTML += array_iii; */   
+  display_iii.innerHTML += array_iii; */
   
   
 
 };
 
+  var mymap = L.map('mapid').setView([31.505, -0.09], 6);
+  
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.satellite',
+    accessToken: 'pk.eyJ1IjoibWljaGFlbG9kdW1vc3U1NyIsImEiOiJjajB5Nzl6ODMwMmVlMzJwZXVqdmtlbGs1In0.YWZAMCT9m7su01RofBiQmQ'
+}).addTo(mymap);
+
+// var points = L.geoJSON(geo.features ,  {
+//   filter: function(feature, layer) {
+//         return feature.properties;
+//     }
+// }).addTo(mymap);
+
+// console.log(points);
+
+function plot (a) {
+
+var lats = []; var lngs = [];
+var marker;
+var markers = []
+
+console.log(a.length)
+for (var i = 0; i < a.length; i++)  {
+    lats.push(a[i][1][1]);
+    lngs.push(a[i][1][0]);
+    // following not needed to calc bbox, just so you can see the points
+    marker = L.marker([a[i][1][1], a[i][1][0]]);
+    marker.addTo(mymap);
+    markers.push(marker);
+}
+
+// calc the min and max lng and lat
+var minlat = Math.min.apply(null, lats),
+    maxlat = Math.max.apply(null, lats);
+var minlng = Math.min.apply(null, lngs),
+    maxlng = Math.max.apply(null, lngs);
+
+// create a bounding rectangle that can be used in leaflet
+bbox = [[minlat,minlng],[maxlat,maxlng]];
+
+// add the bounding box to the map, and set the map extent to it
+var blocks =L.rectangle(bbox).addTo(mymap);
+mymap.fitBounds(bbox);
+lats = [];
+lngs = [];
+maxlng = null;
+minlng = null;
+minlat = null;
+maxlat = null;
+for (var i = 0; i < a.length; i++)  {
+mymap.removeLayer(marker);
+}
+mymap.removeLayer(blocks);
+}
+
 
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </body>
-</html>    
+</html>
     
     
     
