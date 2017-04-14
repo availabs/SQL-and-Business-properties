@@ -93,6 +93,7 @@ var geo = {
   "features": []
   }
 var plots = new Array();
+var blocks;
   
 function getZip(a) {
     
@@ -215,7 +216,7 @@ console.log(plots);
   display_ii.innerHTML= array_ii;
   
   //console.log(array_i.length);
-
+refresh_map();
 plot(plots);                      // to render data on map
 
 if (a == 2) {                     //choices
@@ -350,7 +351,7 @@ function sort_by (a) {
 
 };
 
-  var mymap = L.map('mapid').setView([31.505, -0.09], 6);
+  var mymap = L.map('mapid').setView(new L.LatLng(42.237, -75.923), 6.5);
   
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -393,7 +394,7 @@ var minlng = Math.min.apply(null, lngs),
 bbox = [[minlat,minlng],[maxlat,maxlng]];
 
 // add the bounding box to the map, and set the map extent to it
-var blocks =L.rectangle(bbox).addTo(mymap);
+blocks =L.rectangle(bbox).addTo(mymap);
 mymap.fitBounds(bbox);
 lats = [];
 lngs = [];
@@ -401,10 +402,13 @@ maxlng = null;
 minlng = null;
 minlat = null;
 maxlat = null;
-for (var i = 0; i < a.length; i++)  {
-mymap.removeLayer(marker);
+
 }
-mymap.removeLayer(blocks);
+
+function refresh_map() {
+  
+  //mymap.removeLayer(blocks);
+
 }
 
 
