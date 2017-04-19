@@ -33,6 +33,11 @@ text-transform: capitalize;
 {
 @import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
 }
+
+#Alex_markers
+{
+    color:blue;
+}
 </style>
 
 </head>
@@ -101,6 +106,7 @@ function getZip(a) {
     var area = query.value;
     if(area != keep){
         properties = new Array();
+        plots = new Array();
     }
     keep = area;
     var query_string;
@@ -113,7 +119,7 @@ d3.json(query_string, function(error, zipcode) {
   if (error) return console.error(zipcode);
 
 
-  
+  //console.log(zipcode);
   var counter = 0;
   var zip = zipcode.data;
   var types = {};
@@ -121,31 +127,33 @@ d3.json(query_string, function(error, zipcode) {
 //console.log(zip);
 //console.log(plots);
   for(i = 0; i < zip.length; i++) {
-
+      
     var code = zip[i].NAICSCD;
     var name = zip[i].NAICSDS;
+    var employees = zip[i].LEMPSZDS;
     var dots = zip[i].st_asgeojson;
     var dot = dots.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");
     var feature = {};
     feature.geometry = dots;
-    feature.properties = {name: name, code: code}
+    feature.properties = {name: name, code: code, employee_amount:employees}
     geo.features.push(feature)
     if (types[code] ) {
       types[code]++;
-      plots.push(new Array(name,dot)) ;
+      plots.push(new Array(name,dot,employees)) ;
       sum++;
     }
     else {
       types[code] = 1;
       types[name] = 1;
-      plots[i]= new Array (name,dot);
+      plots[i]= new Array (name,dot,employees);
       sum ++;
       counter++;
     }
+    //console.log(name,employees);
 	  }
-console.log(geo);
-console.log(types);
-console.log(plots);
+// console.log(geo);
+// console.log(types);
+ console.log(plots);
 // coords = geo.features[2].geometry.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");          //for geoJSON geographies
 // coords = plots[0];
 // console.log(coords);
@@ -166,9 +174,9 @@ console.log(plots);
   var cases =0;
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
-  var array_i = new Array() ;  //for refresing
-  var array_ii = new Array()  ;
-  var array_iii = new Array()  ;
+  var array_i = new Array();  //for refresing
+  var array_ii = new Array();
+  var array_iii = new Array();
 
   //console.log(types);
     
@@ -369,19 +377,28 @@ function sort_by (a) {
 // console.log(points);
 
 function plot (a) {
+//console.log(a)
 
 var lats = []; var lngs = [];
 var marker;
+
 var markers = []
 
-console.log(a.length)
+//console.log(a.length)
 for (var i = 0; i < a.length; i++)  {
+    var myIcon = L.divIcon({
+        className:'current-location-icon',
+        html:'<div style="width:10px;height:10px;background-color:chartreuse;border-radius:10px"> </div>',
+        iconAnchor:[0,0],
+        iconSize:null,
+        popupAnchor:[0,0]
+    });
     lats.push(a[i][1][1]);
     lngs.push(a[i][1][0]);
     // following not needed to calc bbox, just so you can see the points
-    marker = L.marker([a[i][1][1], a[i][1][0]]);
+    marker = L.marker([a[i][1][1], a[i][1][0]], {icon: myIcon});
     marker.addTo(mymap);
-    markers.push(marker);
+    // markers.push(marker);
 }
 
 // calc the min and max lng and lat
