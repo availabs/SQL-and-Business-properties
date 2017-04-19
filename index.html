@@ -83,6 +83,14 @@ text-transform: capitalize;
 
 <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="//d3js.org/topojson.v1.min.js"></script>
+<script src="https://d3js.org/d3-array.v1.min.js"></script>
+<script src="https://d3js.org/d3-collection.v1.min.js"></script>
+<script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-format.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<script src="https://d3js.org/d3-time.v1.min.js"></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+<script src="https://d3js.org/d3-scale.v1.min.js"></script>
 <script>
 
 
@@ -139,17 +147,17 @@ d3.json(query_string, function(error, zipcode) {
     geo.features.push(feature)
     if (types[code] ) {
       types[code]++;
-      plots.push(new Array(name,dot,employees)) ;
+      plots.push(new Array(name,dot,employees,code)) ;
       sum++;
     }
     else {
       types[code] = 1;
       types[name] = 1;
-      plots[i]= new Array (name,dot,employees);
+      plots[i]= new Array (name,dot,employees,code);
       sum ++;
       counter++;
     }
-    //console.log(name,employees);
+    console.log(name,employees);
 	  }
 // console.log(geo);
 // console.log(types);
@@ -381,14 +389,25 @@ function plot (a) {
 
 var lats = []; var lngs = [];
 var marker;
-
 var markers = []
 
 //console.log(a.length)
 for (var i = 0; i < a.length; i++)  {
+    var dimension = d3.scaleLinear()              //how big the circle will be
+        .domain([1, 999])
+        .range([5, 30]);
+    var size = dimension(a[i][2].split("-")[1])
+    var color = d3.scaleLinear()                  //color based off 2-digit NAICS codes
+        .domain([45, 99])
+        .range(["red", "blue"]);
+    var paint = color(a[i][3].toString().slice(0,2));
+    // console.log("this is " +size);
+    // console.log(a[i][2].split("-")[1])
+    // console.log(color(paint))
+    
     var myIcon = L.divIcon({
         className:'current-location-icon',
-        html:'<div style="width:10px;height:10px;background-color:chartreuse;border-radius:10px"> </div>',
+        html:'<div style="width:'+size+';height:'+size+';background-color:'+paint+';border-radius:500px;"> </div>',
         iconAnchor:[0,0],
         iconSize:null,
         popupAnchor:[0,0]
