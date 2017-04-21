@@ -5,5 +5,4 @@ add geojson object to left
 set view of bounding box and throw your map in there
 geojson.io, feature collection
 geojson - name,NAICS code
-color based off 2 digit NAICS code, width number of employees
-size by # of employees
+take out replots on map, let plots resize according to map zoom
