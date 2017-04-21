@@ -426,6 +426,7 @@ for (var i = 0; i < a.length; i++)  {
     lngs.push(a[i][1][0]);
     // following not needed to calc bbox, just so you can see the points
     marker = L.marker([a[i][1][1], a[i][1][0]], {icon: myIcon});
+    marker.bindPopup("<b>Company : " +a[i][0]+" </b><br>Population : "+a[i][2]+".").openPopup();
     refresh.push(marker);
     marker.addTo(mymap);
     // markers.push(marker);
