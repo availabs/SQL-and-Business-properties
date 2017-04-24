@@ -38,7 +38,19 @@ text-transform: capitalize;
 {
     color:blue;
 }
+
+#two_digit {
+    
+}
+
+#NAICSCS
+{
+    
+}
 </style>
+
+
+
 
 </head>
 <body style= "background-color:black; color:white;">
@@ -79,6 +91,14 @@ text-transform: capitalize;
 </table>
 </div>
 
+  
+<table  border = "3"; style ="width:30%; margin-left:65%;">
+<tr> <td colspan="2" align= middle>Legend</td></tr>
+<tr><td id = "two_digit"></td><td id = "NAICSCS" > </td>    </tr>
+
+</table>
+
+
 <div id="mapid" style ="height:500px;"></div>
 
 <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -99,6 +119,8 @@ var properties = new Array();                          //global variables
 var display_i =document.querySelector("#Alex_table");
 var display_ii = document.querySelector("#Alex_choices");
 var display_iii = document.querySelector("#Alex_names");
+var display_iv = document.querySelector("#two_digit");
+var display_v = document.querySelector("#NAICSCS");
 var query = document.getElementById("search");
 var keep;
 var geo = {
@@ -108,7 +130,37 @@ var geo = {
 var plots = new Array();
 var blocks = L.rectangle([[1,1],[1,1]]);
 var refresh = new Array();
+var legend = [];
+
+d3.json("https://raw.githubusercontent.com/availabs/kauffman-atlas/master/src/static/data/naicsKeys.json", function(error, diff) {
+  if (error) return console.error(diff);
+//   console.log(diff)
+  var axis = 0;
+  var myVar;
+  for(code in diff) {
+
+      if(!(code >= 100)){
+        legend[axis] = new Array();
+        legend[axis][0] = code;
+        legend[axis][1] = diff[code].title;
+        if( legend[axis][1] == undefined){
+            // console.log("get that part")
+            legend[axis][1] = diff[diff[code].part_of_range].title
+        }
+        axis ++;
+      }
+      else {
+          break
+      }
+
+
+  }
+console.log(legend)
   
+  
+});   // to get proper naics codes
+
+
 function getZip(a) {
     
     var query = document.getElementById("search");
@@ -386,14 +438,18 @@ function sort_by (a) {
 
 // console.log(points);
 
+
 function plot (a) {
 //console.log(a)
+
 
 var lats = []; var lngs = [];
 var marker;
 var markers = [];
-var schema = []
+var schema = [];
 var shade= d3.scale.category20();
+var element = document.getElementById("two_digit");
+
 var inside = 0;
 //console.log(a.length)
 while (refresh.length != 0) {
@@ -406,6 +462,7 @@ while (refresh.length != 0) {
 
 
 for (var i = 0; i < a.length; i++)  {
+    var two_places = a[i][3].toString().slice(0,2);
     var dimension = d3.scaleLinear()              //how big the circle will be
         .domain([1, 999])
         .range([5, 30]);
@@ -413,9 +470,11 @@ for (var i = 0; i < a.length; i++)  {
     var color = d3.scaleLinear()                  //color based off 2-digit NAICS codes
         .domain([45, 99])
         .range(["red", "blue"]);
-    inside = schema.indexOf(a[i][3].toString().slice(0,2));
+    inside = schema.indexOf(two_places);
     if (inside == -1) {
-        schema.push(a[i][3].toString().slice(0,2));
+        schema.push(two_places);
+        display_iv.innerHTML += two_places + "<br />" + "<br />" ;
+        display_v.innerHTML += a[i][0] + "<br />"  + "<br />" ;
     }
     
     var paint = shade(inside);
@@ -439,6 +498,7 @@ for (var i = 0; i < a.length; i++)  {
     marker.addTo(mymap);
     // markers.push(marker);
 }
+
 
 // console.log(refresh)
 
