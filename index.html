@@ -128,7 +128,7 @@ d3.json(query_string, function(error, zipcode) {
   if (error) return console.error(zipcode);
 
 
-  //console.log(zipcode);
+  console.log(zipcode);
   var counter = 0;
   var zip = zipcode.data;
   var types = {};
@@ -141,6 +141,7 @@ d3.json(query_string, function(error, zipcode) {
     var name = zip[i].NAICSDS;
     var employees = zip[i].LEMPSZDS;
     var dots = zip[i].st_asgeojson;
+    var title = zip[i].CONAME;
     var dot = dots.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");
     var feature = {};
     feature.geometry = dots;
@@ -148,13 +149,13 @@ d3.json(query_string, function(error, zipcode) {
     geo.features.push(feature)
     if (types[code] ) {
       types[code]++;
-      plots.push(new Array(name,dot,employees,code)) ;
+      plots.push(new Array(name,dot,employees,code,title)) ;
       sum++;
     }
     else {
       types[code] = 1;
       types[name] = 1;
-      plots[i]= new Array (name,dot,employees,code);
+      plots[i]= new Array (name,dot,employees,code,title);
       sum ++;
       counter++;
     }
@@ -390,8 +391,10 @@ function plot (a) {
 
 var lats = []; var lngs = [];
 var marker;
-var markers = []
-
+var markers = [];
+var schema = []
+var shade= d3.scale.category20();
+var inside = 0;
 //console.log(a.length)
 while (refresh.length != 0) {
     mymap.removeLayer(refresh[0]);
@@ -410,7 +413,12 @@ for (var i = 0; i < a.length; i++)  {
     var color = d3.scaleLinear()                  //color based off 2-digit NAICS codes
         .domain([45, 99])
         .range(["red", "blue"]);
-    var paint = color(a[i][3].toString().slice(0,2));
+    inside = schema.indexOf(a[i][3].toString().slice(0,2));
+    if (inside == -1) {
+        schema.push(a[i][3].toString().slice(0,2));
+    }
+    
+    var paint = shade(inside);
     // console.log("this is " +size);
     // console.log(a[i][2].split("-")[1])
     // console.log(color(paint))
@@ -426,7 +434,7 @@ for (var i = 0; i < a.length; i++)  {
     lngs.push(a[i][1][0]);
     // following not needed to calc bbox, just so you can see the points
     marker = L.marker([a[i][1][1], a[i][1][0]], {icon: myIcon});
-    marker.bindPopup("<b>Company : " +a[i][0]+" </b><br>Population : "+a[i][2]+".").openPopup();
+    marker.bindPopup("<b>Company : " +a[i][4]+" </b><br>Population : "+a[i][2]+".").openPopup();
     refresh.push(marker);
     marker.addTo(mymap);
     // markers.push(marker);
