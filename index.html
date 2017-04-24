@@ -131,48 +131,52 @@ var plots = new Array();
 var blocks = L.rectangle([[1,1],[1,1]]);
 var refresh = new Array();
 var legend = [];
-
-d3.json("https://raw.githubusercontent.com/availabs/kauffman-atlas/master/src/static/data/naicsKeys.json", function(error, diff) {
-  if (error) return console.error(diff);
-//   console.log(diff)
-  var axis = 0;
-  var myVar;
-  for(code in diff) {
-
-      if(!(code >= 100)){
-        legend[axis] = new Array();
-        legend[axis][0] = code;
-        legend[axis][1] = diff[code].title;
-        if( legend[axis][1] == undefined){
-            // console.log("get that part")
-            legend[axis][1] = diff[diff[code].part_of_range].title
-        }
-        axis ++;
-      }
-      else {
-          break
-      }
+var two_digit_name = []
 
 
-  }
-console.log(legend)
-  
-  
-});   // to get proper naics codes
+
 
 
 function getZip(a) {
+    
+    d3.json("https://raw.githubusercontent.com/availabs/kauffman-atlas/master/src/static/data/naicsKeys.json", function(error, diff) {
+      if (error) return console.error(diff);
+    //   console.log(diff)
+        var axis = 0;
+        for(code in diff) {
+        
+              if(!(code >= 100)){
+                legend[axis] = new Array();
+                legend[axis] = code;
+                two_digit_name[axis] = diff[code].title;
+                if( two_digit_name[axis] == undefined){
+                    // console.log("get that part")
+                    two_digit_name[axis] = diff[diff[code].part_of_range].title
+                }
+                axis ++;
+              }
+              else {
+                  break
+              }
+        }
+    console.log(legend)
+    console.log(two_digit_name)
+    });   // to get proper naics codes
+
     
     var query = document.getElementById("search");
     var area = query.value;
     if(area != keep){
         properties = new Array();
         plots = new Array();
+        legend = new Array();
+        two_digit_name = new Array();
     }
+
     keep = area;
     var query_string;
     query_string = "http://demeter.availabs.org:3000/API/geobyzip/" + area;
-    console.log(query_string);
+    // console.log(query_string);
 
 
 
@@ -180,7 +184,7 @@ d3.json(query_string, function(error, zipcode) {
   if (error) return console.error(zipcode);
 
 
-  console.log(zipcode);
+//   console.log(zipcode);
   var counter = 0;
   var zip = zipcode.data;
   var types = {};
@@ -215,7 +219,7 @@ d3.json(query_string, function(error, zipcode) {
 	  }
 // console.log(geo);
 // console.log(types);
- console.log(plots);
+// console.log(plots);
 // coords = geo.features[2].geometry.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");          //for geoJSON geographies
 // coords = plots[0];
 // console.log(coords);
@@ -449,7 +453,8 @@ var markers = [];
 var schema = [];
 var shade= d3.scale.category20();
 var element = document.getElementById("two_digit");
-
+var array_iv = new Array();
+var array_v = new Array();
 var inside = 0;
 //console.log(a.length)
 while (refresh.length != 0) {
@@ -473,8 +478,9 @@ for (var i = 0; i < a.length; i++)  {
     inside = schema.indexOf(two_places);
     if (inside == -1) {
         schema.push(two_places);
-        display_iv.innerHTML += two_places + "<br />" + "<br />" ;
-        display_v.innerHTML += a[i][0] + "<br />"  + "<br />" ;
+        array_iv += two_places + "<br />" ;
+        
+        array_v += two_digit_name[legend.indexOf(two_places)]  + "<br />"  ;
     }
     
     var paint = shade(inside);
@@ -498,7 +504,9 @@ for (var i = 0; i < a.length; i++)  {
     marker.addTo(mymap);
     // markers.push(marker);
 }
-
+display_iv.innerHTML = array_iv;
+display_v.innerHTML = array_v;
+console.log(legend.indexOf(92))
 
 // console.log(refresh)
 
