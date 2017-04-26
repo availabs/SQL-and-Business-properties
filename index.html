@@ -21,6 +21,7 @@ td:hover {
   opacity: 1;
 }
 
+
 #Alex_names
 {
 
@@ -40,9 +41,11 @@ text-transform: capitalize;
 }
 
 #two_digit {
+    opacity: 1;
+}
+#two_digit_colors {
     
 }
-
 #NAICSCS
 {
     
@@ -58,7 +61,7 @@ text-transform: capitalize;
 <br />
 <!-- to display insert box -->
 <div class="container">
-  <h2>Zipcode</h2>
+  <h2 >Zipcode</h2>
   <form class="form-inline" role="form">
     <form style="width:300px">
   <div class="form-group">
@@ -91,10 +94,12 @@ text-transform: capitalize;
 </table>
 </div>
 
-  
+
+
+
 <table  border = "3"; style ="width:30%; margin-left:65%;">
-<tr> <td colspan="2" align= middle>Legend</td></tr>
-<tr><td id = "two_digit"></td><td id = "NAICSCS" > </td>    </tr>
+<tr> <td colspan="3" align= middle>Legend</td></tr>
+<tr><td id = "two_digit_colors"> </td><td id = "two_digit"> </td><td id = "NAICSCS" > </td>    </tr>
 
 </table>
 
@@ -121,6 +126,7 @@ var display_ii = document.querySelector("#Alex_choices");
 var display_iii = document.querySelector("#Alex_names");
 var display_iv = document.querySelector("#two_digit");
 var display_v = document.querySelector("#NAICSCS");
+var display_vi = document.querySelector("#two_digit_colors");
 var query = document.getElementById("search");
 var keep;
 var geo = {
@@ -455,7 +461,10 @@ var shade= d3.scale.category20();
 var element = document.getElementById("two_digit");
 var array_iv = new Array();
 var array_v = new Array();
+var array_vi = new Array();
 var inside = 0;
+
+
 //console.log(a.length)
 while (refresh.length != 0) {
     mymap.removeLayer(refresh[0]);
@@ -476,14 +485,17 @@ for (var i = 0; i < a.length; i++)  {
         .domain([45, 99])
         .range(["red", "blue"]);
     inside = schema.indexOf(two_places);
+    var paint = shade(two_places);
     if (inside == -1) {
+        console.log(inside)
         schema.push(two_places);
-        array_iv += two_places + "<br />" ;
+        array_iv += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
+        array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
+        // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
+        // array_vi += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
         
-        array_v += two_digit_name[legend.indexOf(two_places)]  + "<br />"  ;
     }
-    
-    var paint = shade(inside);
+    console.log(paint)
     // console.log("this is " +size);
     // console.log(a[i][2].split("-")[1])
     // console.log(color(paint))
@@ -506,6 +518,7 @@ for (var i = 0; i < a.length; i++)  {
 }
 display_iv.innerHTML = array_iv;
 display_v.innerHTML = array_v;
+display_vi.innerHTML = array_vi;
 console.log(legend.indexOf(92))
 
 // console.log(refresh)
