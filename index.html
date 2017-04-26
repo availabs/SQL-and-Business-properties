@@ -431,14 +431,20 @@ function sort_by (a) {
 
 };
 
-  var mymap = L.map('mapid').setView(new L.LatLng(42.237, -75.923), 6.5);
+  var mymap = L.map('mapid', { zoomControl:false }).setView(new L.LatLng(42.237, -75.923), 6.5);
   
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom:18,
+    // minZoom:9,
     id: 'mapbox.satellite',
     accessToken: 'pk.eyJ1IjoibWljaGFlbG9kdW1vc3U1NyIsImEiOiJjajB5Nzl6ODMwMmVlMzJwZXVqdmtlbGs1In0.YWZAMCT9m7su01RofBiQmQ'
 }).addTo(mymap);
+mymap.touchZoom.disable();
+mymap.doubleClickZoom.disable();
+mymap.scrollWheelZoom.disable();
+mymap.boxZoom.disable();
+mymap.keyboard.disable();
 
 // var points = L.geoJSON(geo.features ,  {
 //   filter: function(feature, layer) {
@@ -487,15 +493,15 @@ for (var i = 0; i < a.length; i++)  {
     inside = schema.indexOf(two_places);
     var paint = shade(two_places);
     if (inside == -1) {
-        console.log(inside)
+        //console.log(inside)
         schema.push(two_places);
-        array_iv += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
-        array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
+        array_iv += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div>'
+        // array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
         // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
         // array_vi += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
         
     }
-    console.log(paint)
+    //console.log(paint)
     // console.log("this is " +size);
     // console.log(a[i][2].split("-")[1])
     // console.log(color(paint))
@@ -519,7 +525,7 @@ for (var i = 0; i < a.length; i++)  {
 display_iv.innerHTML = array_iv;
 display_v.innerHTML = array_v;
 display_vi.innerHTML = array_vi;
-console.log(legend.indexOf(92))
+//console.log(legend.indexOf(92))
 
 // console.log(refresh)
 
@@ -535,6 +541,8 @@ bbox = [[minlat,minlng],[maxlat,maxlng]];
 // add the bounding box to the map, and set the map extent to it
 blocks =L.rectangle(bbox).addTo(mymap);
 mymap.fitBounds(bbox);
+var level =mymap.getZoom();
+console.log(level)
 lats = [];
 lngs = [];
 maxlng = null;
