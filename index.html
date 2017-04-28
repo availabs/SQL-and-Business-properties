@@ -495,7 +495,8 @@ for (var i = 0; i < a.length; i++)  {
     if (inside == -1) {
         //console.log(inside)
         schema.push(two_places);
-        array_iv += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div>'
+        array_iv += '<a id = '+two_places+' onclick ="remove_select('+two_places+');"><div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div></a>'
+        // console.log(array_iv)
         // array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
         // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
         // array_vi += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
@@ -508,10 +509,11 @@ for (var i = 0; i < a.length; i++)  {
     
     var myIcon = L.divIcon({
         className:'current-location-icon',
-        html:'<div style="width:'+size+';height:'+size+';background-color:'+paint+';border-radius:500px;"> </div>',
+        html:'<div id ='+two_places+' class = NAICS style="width:'+size+';height:'+size+';background-color:'+paint+';border-radius:500px;"> </div>',
         iconAnchor:[0,0],
         iconSize:null,
-        popupAnchor:[0,0]
+        popupAnchor:[0,0],
+        id: two_places
     });
     lats.push(a[i][1][1]);
     lngs.push(a[i][1][0]);
@@ -522,6 +524,7 @@ for (var i = 0; i < a.length; i++)  {
     marker.addTo(mymap);
     // markers.push(marker);
 }
+
 display_iv.innerHTML = array_iv;
 display_v.innerHTML = array_v;
 display_vi.innerHTML = array_vi;
@@ -542,7 +545,7 @@ bbox = [[minlat,minlng],[maxlat,maxlng]];
 blocks =L.rectangle(bbox).addTo(mymap);
 mymap.fitBounds(bbox);
 var level =mymap.getZoom();
-console.log(level)
+//console.log(level)
 lats = [];
 lngs = [];
 maxlng = null;
@@ -559,6 +562,22 @@ function refresh_map() {
 
 }
 
+function remove_select(a) {  //this function removes all nodes on the map related to the two
+                           // digit NAICS code given by the legend
+    // console.log(refresh[1].dragging._marker.options.icon.options.id)
+    // var g= document.querySelector("mapid");
+    // console.log(g)
+    for (var i = 0; i != refresh.length; i++) {
+        if (a == refresh[i].dragging._marker.options.icon.options.id){
+            console.log(refresh[i].id)
+            mymap.removeLayer(refresh[i]);
+        }
+        // refresh.splice(0,1);
+        //console.log(refresh)
+        //refresh_map();
+    }
+    
+}
 
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
