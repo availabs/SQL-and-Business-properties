@@ -139,12 +139,6 @@ var refresh = new Array();
 var legend = [];
 var two_digit_name = []
 
-
-
-
-
-function getZip(a) {
-    
     d3.json("https://raw.githubusercontent.com/availabs/kauffman-atlas/master/src/static/data/naicsKeys.json", function(error, diff) {
       if (error) return console.error(diff);
     //   console.log(diff)
@@ -169,15 +163,23 @@ function getZip(a) {
     console.log(two_digit_name)
     });   // to get proper naics codes
 
+
+
+
+function getZip(a) {
+    
+
+
     
     var query = document.getElementById("search");
     var area = query.value;
     if(area != keep){
         properties = new Array();
         plots = new Array();
-        legend = new Array();
-        two_digit_name = new Array();
+        // legend = new Array();
+        // two_digit_name = new Array();
     }
+    
 
     keep = area;
     var query_string;
@@ -244,6 +246,7 @@ d3.json(query_string, function(error, zipcode) {
 
 // using shadowDOM didnt work
   var cases =0;
+  var not_a_num = 0
   var items =  Object.keys(types);
   var businesses =Object.keys(types).map(function(key){return types[key]});
   var array_i = new Array();  //for refresing
@@ -253,10 +256,13 @@ d3.json(query_string, function(error, zipcode) {
   //console.log(types);
     
   for(i = 0; i < counter; i++) {
-      properties[i] = new Array();
-      properties[i][0] = items[i] ;
-      properties[i][1] =  items[counter+i];
-      properties[i][2] =  businesses[i];
+      if(!isNaN(items[i])) {
+         properties[i] = new Array();
+         properties[i][0] = items[i] ;
+         properties[i][1] =  items[counter+i];
+         properties[i][2] =  businesses[i];
+         not_a_num++;
+         }
       }
       //display_i.innerHTML = array_i
   //console.log(properties);
@@ -282,7 +288,7 @@ d3.json(query_string, function(error, zipcode) {
     
   //console.log(properties);
     
-  for(i = 0; i < counter; i++) {
+  for(i = 0; i < not_a_num; i++) {
   array_i += properties[i][0] + "<br />";
   if(properties[i][1] == null) {
     properties[i][1] = "OTHER BUSINESS";
@@ -347,7 +353,7 @@ function sort_by (a) {
   
   
   
-  console.log(two_display);
+//   console.log(two_display);
 
   for(i = 0; i < properties.length; i++) {
    
@@ -370,7 +376,7 @@ function sort_by (a) {
         counter++;
     }
   }
-    console.log(two_prop);
+    // console.log(two_prop);
   
   var item =  Object.keys(two_prop);
   var business =Object.keys(two_prop).map(function(key){return two_prop[key]});
@@ -482,26 +488,32 @@ while (refresh.length != 0) {
 
 
 for (var i = 0; i < a.length; i++)  {
-    var two_places = a[i][3].toString().slice(0,2);
-    var dimension = d3.scaleLinear()              //how big the circle will be
-        .domain([1, 999])
-        .range([5, 30]);
-    var size = dimension(a[i][2].split("-")[1])
-    var color = d3.scaleLinear()                  //color based off 2-digit NAICS codes
-        .domain([45, 99])
-        .range(["red", "blue"]);
-    inside = schema.indexOf(two_places);
-    var paint = shade(two_places);
-    if (inside == -1) {
-        //console.log(inside)
-        schema.push(two_places);
-        array_iv += '<a id = '+two_places+' onclick ="remove_select('+two_places+');"><div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div></a>'
-        // console.log(array_iv)
-        // array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
-        // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
-        // array_vi += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
+    if(a[i][3] != null) {
+        // console.log(a[i][3])
+        var two_places = a[i][3].toString().slice(0,2);
+        var dimension = d3.scaleLinear()              //how big the circle will be
+            .domain([1, 999])
+            .range([5, 30]);
+        if(a[i][2] != null){
+            var size = dimension(a[i][2].split("-")[1])
+        }
+        var color = d3.scaleLinear()                  //color based off 2-digit NAICS codes
+            .domain([45, 99])
+            .range(["red", "blue"]);
+        inside = schema.indexOf(two_places);
+        var paint = shade(two_places);
+        if (inside == -1) {
+            //console.log(inside)
+            schema.push(two_places);
+            array_iv += '<a id = '+two_places+' onclick ="remove_select('+two_places+');"><div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div></a>'
+            // console.log(array_iv)
+            // array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
+            // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
+            // array_vi += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
         
+        }
     }
+
     //console.log(paint)
     // console.log("this is " +size);
     // console.log(a[i][2].split("-")[1])
