@@ -435,7 +435,7 @@ function sort_by (a) {
   
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom:18,
+    maxZoom:25,
     // minZoom:9,
     id: 'mapbox.satellite',
     accessToken: 'pk.eyJ1IjoibWljaGFlbG9kdW1vc3U1NyIsImEiOiJjajB5Nzl6ODMwMmVlMzJwZXVqdmtlbGs1In0.YWZAMCT9m7su01RofBiQmQ'
@@ -567,10 +567,26 @@ function remove_select(a) {  //this function removes all nodes on the map relate
     // console.log(refresh[1].dragging._marker.options.icon.options.id)
     // var g= document.querySelector("mapid");
     // console.log(g)
+    var show_switch;
     for (var i = 0; i != refresh.length; i++) {
+    show_switch = refresh[i]._events.remove.length;
         if (a == refresh[i].dragging._marker.options.icon.options.id){
-            console.log(refresh[i].id)
-            mymap.removeLayer(refresh[i]);
+             if ( show_switch > 1) {
+            
+                mymap.removeLayer(refresh[i])
+             }
+             else{
+                 refresh[i].addTo(mymap);
+             }
+//             var display = refresh[i].dragging._marker.dragging._marker._icon.hidden;
+// 			if (display == false) {
+// 				refresh[i].dragging._marker.dragging._marker._icon.hidden = true;
+// 				console.log(refresh[i].dragging._marker.dragging._marker._icon.hidden)
+// 			}
+// 			else
+// 			{
+// 				display = false;
+// 			}
         }
         // refresh.splice(0,1);
         //console.log(refresh)
