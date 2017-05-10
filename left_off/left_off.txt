@@ -1,0 +1,10 @@
+make index.html
+
+make a d3.json on it, and use that to pull data from the api
+
+query data and count  different types of NAICS CODE codes
+
+refer to image in this folder
+
+
+now make an object which catches the types and how many times the type occurs

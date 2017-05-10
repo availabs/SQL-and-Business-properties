@@ -1,0 +1,18 @@
+{
+  "name": "library-rest-api",
+  "version": "0.0.1",
+  "description": "A simple library REST api",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "d3-scale": "^1.0.5",
+    "express": "~3.1.0",
+    "mongoose": "^4.8.5"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "index.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
