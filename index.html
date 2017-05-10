@@ -1,0 +1,618 @@
+<html lang = "en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title> NAICS code off zipcode</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<style type = "text/css">
+
+
+#Alex_table
+{
+@import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
+}
+td {
+
+  opacity: .5;
+  transition: opacity 420ms ease-in-out;
+}
+td:hover {
+  opacity: 1;
+}
+
+
+#Alex_names
+{
+
+text-transform: capitalize;
+
+
+}
+
+#Alex_choices
+{
+@import "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css";
+}
+
+#Alex_markers
+{
+    color:blue;
+}
+
+#two_digit {
+    opacity: 1;
+}
+#two_digit_colors {
+    
+}
+#NAICSCS
+{
+    
+}
+</style>
+
+
+
+
+</head>
+<body style= "background-color:black; color:white;">
+
+<br />
+<!-- to display insert box -->
+<div class="container">
+  <h2 >Zipcode</h2>
+  <form class="form-inline" role="form">
+    <form style="width:300px">
+  <div class="form-group">
+    <label ></label>
+    <input type = "text" class="form-control" id="search" placeholder="Zipcode">
+  </div>
+     
+    <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(8);" value = "Go">
+	  </form>
+</form>
+</div>
+
+<div class="container">
+<input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(2);" value = "2 digit">
+<input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(4);" value = "4 digit">
+<input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(6);" value = "6 digit">
+</div>
+
+
+<br />
+<br />
+
+
+<!-- where the table to display desired codes are-->
+<div class="container">
+
+<table class="table"  >
+<tr><th>NAICS CODE<br /></th><th>NAICS name<br /></th><th># of business <br /></th></tr>
+  <tr ><td id = "Alex_table"></td><td id = "Alex_names" class="capitalized"></td><td id = "Alex_choices"></td></tr>
+</table>
+</div>
+
+
+
+
+<table  border = "3"; style ="width:30%; margin-left:65%;">
+<tr> <td colspan="3" align= middle>Legend</td></tr>
+<tr><td id = "two_digit_colors"> </td><td id = "two_digit"> </td><td id = "NAICSCS" > </td>    </tr>
+
+</table>
+
+
+<div id="mapid" style ="height:500px;"></div>
+
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script src="https://d3js.org/d3-array.v1.min.js"></script>
+<script src="https://d3js.org/d3-collection.v1.min.js"></script>
+<script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-format.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<script src="https://d3js.org/d3-time.v1.min.js"></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+<script src="https://d3js.org/d3-scale.v1.min.js"></script>
+<script>
+
+
+
+var properties = new Array();                          //global variables
+var display_i =document.querySelector("#Alex_table");
+var display_ii = document.querySelector("#Alex_choices");
+var display_iii = document.querySelector("#Alex_names");
+var display_iv = document.querySelector("#two_digit");
+var display_v = document.querySelector("#NAICSCS");
+var display_vi = document.querySelector("#two_digit_colors");
+var query = document.getElementById("search");
+var keep;
+var geo = {
+  "type": "FeatureCollection",
+  "features": []
+  }
+var plots = new Array();
+var blocks = L.rectangle([[1,1],[1,1]]);
+var refresh = new Array();
+var legend = [];
+var two_digit_name = []
+
+    d3.json("https://raw.githubusercontent.com/availabs/kauffman-atlas/master/src/static/data/naicsKeys.json", function(error, diff) {
+      if (error) return console.error(diff);
+    //   console.log(diff)
+        var axis = 0;
+        for(code in diff) {
+        
+              if(!(code >= 100)){
+                legend[axis] = new Array();
+                legend[axis] = code;
+                two_digit_name[axis] = diff[code].title;
+                if( two_digit_name[axis] == undefined){
+                    // console.log("get that part")
+                    two_digit_name[axis] = diff[diff[code].part_of_range].title
+                }
+                axis ++;
+              }
+              else {
+                  break
+              }
+        }
+    console.log(legend)
+    console.log(two_digit_name)
+    });   // to get proper naics codes
+
+
+
+
+function getZip(a) {
+    
+
+
+    
+    var query = document.getElementById("search");
+    var area = query.value;
+    if(area != keep){
+        properties = new Array();
+        plots = new Array();
+        // legend = new Array();
+        // two_digit_name = new Array();
+    }
+    
+
+    keep = area;
+    var query_string;
+    query_string = "http://demeter.availabs.org:3000/API/geobyzip/" + area;
+    // console.log(query_string);
+
+
+
+d3.json(query_string, function(error, zipcode) {
+  if (error) return console.error(zipcode);
+
+
+//   console.log(zipcode);
+  var counter = 0;
+  var zip = zipcode.data;
+  var types = {};
+  var sum = 0;
+//console.log(zip);
+//console.log(plots);
+  for(i = 0; i < zip.length; i++) {
+      
+    var code = zip[i].NAICSCD;
+    var name = zip[i].NAICSDS;
+    var employees = zip[i].LEMPSZDS;
+    var dots = zip[i].st_asgeojson;
+    var title = zip[i].CONAME;
+    var dot = dots.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");
+    var feature = {};
+    feature.geometry = dots;
+    feature.properties = {name: name, code: code, employee_amount:employees}
+    geo.features.push(feature)
+    if (types[code] ) {
+      types[code]++;
+      plots.push(new Array(name,dot,employees,code,title)) ;
+      sum++;
+    }
+    else {
+      types[code] = 1;
+      types[name] = 1;
+      plots[i]= new Array (name,dot,employees,code,title);
+      sum ++;
+      counter++;
+    }
+    // console.log(name,employees);
+	  }
+// console.log(geo);
+// console.log(types);
+// console.log(plots);
+// coords = geo.features[2].geometry.split(":")[2].replace(/[\]\[]}/g,'').replace(/[\]\[]/g,'').split(",");          //for geoJSON geographies
+// coords = plots[0];
+// console.log(coords);
+  //console.log(counter);
+
+  /*var _sum = Object.keys(types).reduce(function (sum, k) {
+  
+    var val = types[k]
+  
+    if (val) {
+      sum += val
+    }
+
+    return sum
+  }, 0) */
+
+// using shadowDOM didnt work
+  var cases =0;
+  var not_a_num = 0
+  var items =  Object.keys(types);
+  var businesses =Object.keys(types).map(function(key){return types[key]});
+  var array_i = new Array();  //for refresing
+  var array_ii = new Array();
+  var array_iii = new Array();
+
+  //console.log(types);
+    
+  for(i = 0; i < counter; i++) {
+      if(!isNaN(items[i])) {
+         properties[i] = new Array();
+         properties[i][0] = items[i] ;
+         properties[i][1] =  items[counter+i];
+         properties[i][2] =  businesses[i];
+         not_a_num++;
+         }
+      }
+      //display_i.innerHTML = array_i
+  //console.log(properties);
+  
+  properties.sort(function(a,b) {
+
+      return b[2] - a[2];
+  });
+  /* var bubble_sort = function(a,b,c,d) {
+  d = 0;
+  if (d = 1){
+    bubble(
+  }
+  for(i = 0; i < counter; i++) {
+      if (i != 0) {
+        if (properties[i][2] > properties[i-1][2]) {
+          var temp = properties[i];
+          properties[i] = properties[i-1];
+          properties[i-1] = temp;
+        }
+      }
+  } */
+    
+  //console.log(properties);
+    
+  for(i = 0; i < not_a_num; i++) {
+  array_i += properties[i][0] + "<br />";
+  if(properties[i][1] == null) {
+    properties[i][1] = "OTHER BUSINESS";
+  }
+  array_iii += properties[i][1] + "<br />";
+  array_ii += properties[i][2] + "<br />";
+  }
+   
+  display_i.innerHTML = array_i;
+  display_iii.innerHTML= array_iii.toLowerCase();
+  display_ii.innerHTML= array_ii;
+  
+  //console.log(array_i.length);
+refresh_map();
+plot(plots);                      // to render data on map
+
+if (a == 2) {                     //choices
+sort_by(2);
+}
+
+if (a == 4) {                     //choices
+sort_by(4);
+}
+
+if (a == 6) {                     //choices
+sort_by(6);
+}
+
+
+});
+
+
+ 
+}
+
+
+console.log(properties);
+
+function sort_by (a) {
+
+  var two_prop = {};                           //if alex only wants values
+  var two_display = properties;                //if alex wants new table
+  var counter = 0;
+  for(i = 0; i < two_display.length; i++) {
+    if(a == 2) {
+    two_display[i][0] = two_display[i][0].slice(0,2)
+    }
+    if(a == 4) {
+    two_display[i][0] = two_display[i][0].slice(0,4)
+    }
+    if(a == 6) {
+    two_display[i][0] = two_display[i][0].slice(0,6)
+    }
+    
+  }
+  
+
+  two_display.sort(function(a,b) {
+
+      return a[0] - b[0];
+  });
+  
+  
+  
+//   console.log(two_display);
+
+  for(i = 0; i < properties.length; i++) {
+   
+    var total_count = properties[i][2];
+    if(a == 2) {
+    var code = properties[i][0].slice(0,2);
+    }
+    if(a == 4) {
+    var code = properties[i][0].slice(0,4);
+    }
+    if(a == 6) {
+    var code = properties[i][0].slice(0,6);
+    }
+    
+    if (two_prop[code]) {
+        two_prop[code]  += total_count;
+    }
+    else {
+        two_prop[code]  = total_count
+        counter++;
+    }
+  }
+    // console.log(two_prop);
+  
+  var item =  Object.keys(two_prop);
+  var business =Object.keys(two_prop).map(function(key){return two_prop[key]});
+  var array_i = new Array() ;  //for refresing
+  var array_ii = new Array();
+  var array_iii = new Array();
+  
+  
+  /*for(i = 0; i < counter; i++) {             //display options
+    array_i += item[i] + "<br />";
+    array_ii += business[i] + "<br />";
+    array_iii += "<br />"
+  }
+  
+  display_i.innerHTML = array_i;
+  display_ii.innerHTML= array_ii;
+  display_iii.innerHTML = ""; */
+  
+  array_i += two_display[0][0] + "<br />";
+  array_ii += business[0] + "<br />";
+  /*for(i = 0; i < counter; i++) {
+    array_ii += business[i] + "<br />";
+    
+  
+  }*/
+  counter = 1;
+  for(i = 0; i < two_display.length; i++) {
+    if (i != 0) {
+        if(two_display[i-1][0] != two_display[i][0]) {
+            array_i += two_display[i][0] + "<br />";
+            array_ii += business[counter] + "<br />";
+            counter++;
+        }
+        else {
+            array_i += "<br />"
+            array_ii += "<br />"
+        }
+    }
+
+    array_iii += two_display[i][1] +"<br />"
+  }
+  
+  display_i.innerHTML = array_i;
+  display_ii.innerHTML= array_ii;
+  display_iii.innerHTML = array_iii.toLowerCase();
+  
+  /*for(i = 0; i < two_display.length; i++) {
+    array_i += two_display[i][0] + "<br />";
+    array_iii += two_display[i][1] + "<br />";
+    array_ii += two_display[i][2] + "<br />";
+  
+  }
+  display_i.innerHTML += array_i;
+  display_ii.innerHTML += array_ii;
+  display_iii.innerHTML += array_iii; */
+  
+  
+
+};
+
+  var mymap = L.map('mapid', { zoomControl:false }).setView(new L.LatLng(42.237, -75.923), 6.5);
+  
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom:18,
+    // minZoom:9,
+    id: 'mapbox.satellite',
+    accessToken: 'pk.eyJ1IjoibWljaGFlbG9kdW1vc3U1NyIsImEiOiJjajB5Nzl6ODMwMmVlMzJwZXVqdmtlbGs1In0.YWZAMCT9m7su01RofBiQmQ'
+}).addTo(mymap);
+mymap.touchZoom.disable();
+mymap.doubleClickZoom.disable();
+mymap.scrollWheelZoom.disable();
+mymap.boxZoom.disable();
+mymap.keyboard.disable();
+
+// var points = L.geoJSON(geo.features ,  {
+//   filter: function(feature, layer) {
+//         return feature.properties;
+//     }
+// }).addTo(mymap);
+
+// console.log(points);
+
+
+function plot (a) {
+//console.log(a)
+
+
+var lats = []; var lngs = [];
+var marker;
+var markers = [];
+var schema = [];
+var shade= d3.scale.category20();
+var element = document.getElementById("two_digit");
+var array_iv = new Array();
+var array_v = new Array();
+var array_vi = new Array();
+var inside = 0;
+
+
+//console.log(a.length)
+while (refresh.length != 0) {
+    mymap.removeLayer(refresh[0]);
+    refresh.splice(0,1);
+    // console.log(refresh)
+    //refresh_map();
+}
+
+
+
+for (var i = 0; i < a.length; i++)  {
+    if(a[i][3] != null) {
+        // console.log(a[i][3])
+        var two_places = a[i][3].toString().slice(0,2);
+        var dimension = d3.scaleLinear()              //how big the circle will be
+            .domain([1, 999])
+            .range([5, 30]);
+        if(a[i][2] != null){
+            var size = dimension(a[i][2].split("-")[1])
+        }
+        var color = d3.scaleLinear()                  //color based off 2-digit NAICS codes
+            .domain([45, 99])
+            .range(["red", "blue"]);
+        inside = schema.indexOf(two_places);
+        var paint = shade(two_places);
+        if (inside == -1) {
+            //console.log(inside)
+            schema.push(two_places);
+            array_iv += '<a id = '+two_places+' onclick ="remove_select('+two_places+');"><div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div></a>'
+            // console.log(array_iv)
+            // array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
+            // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
+            // array_vi += '<div style ="background-color:'+paint+'; padding:5px;"> '+two_places+'</div>'
+        
+        }
+    }
+
+    //console.log(paint)
+    // console.log("this is " +size);
+    // console.log(a[i][2].split("-")[1])
+    // console.log(color(paint))
+    
+    var myIcon = L.divIcon({
+        className:'current-location-icon',
+        html:'<div id ='+two_places+' class = NAICS style="width:'+size+';height:'+size+';background-color:'+paint+';border-radius:500px;"> </div>',
+        iconAnchor:[0,0],
+        iconSize:null,
+        popupAnchor:[0,0],
+        id: two_places
+    });
+    lats.push(a[i][1][1]);
+    lngs.push(a[i][1][0]);
+    // following not needed to calc bbox, just so you can see the points
+    marker = L.marker([a[i][1][1], a[i][1][0]], {icon: myIcon});
+    marker.bindPopup("<b>Company : " +a[i][4]+" </b><br>Population : "+a[i][2]+".").openPopup();
+    refresh.push(marker);
+    marker.addTo(mymap);
+    // markers.push(marker);
+}
+
+display_iv.innerHTML = array_iv;
+display_v.innerHTML = array_v;
+display_vi.innerHTML = array_vi;
+//console.log(legend.indexOf(92))
+
+// console.log(refresh)
+
+// calc the min and max lng and lat
+var minlat = Math.min.apply(null, lats),
+    maxlat = Math.max.apply(null, lats);
+var minlng = Math.min.apply(null, lngs),
+    maxlng = Math.max.apply(null, lngs);
+
+// create a bounding rectangle that can be used in leaflet
+bbox = [[minlat,minlng],[maxlat,maxlng]];
+
+// add the bounding box to the map, and set the map extent to it
+blocks =L.rectangle(bbox).addTo(mymap);
+mymap.fitBounds(bbox);
+var level =mymap.getZoom();
+//console.log(level)
+lats = [];
+lngs = [];
+maxlng = null;
+minlng = null;
+minlat = null;
+maxlat = null;
+
+}
+
+function refresh_map() {
+  
+  
+  mymap.removeLayer(blocks);
+
+}
+
+function remove_select(a) {  //this function removes all nodes on the map related to the two
+                           // digit NAICS code given by the legend
+    // console.log(refresh[1].dragging._marker.options.icon.options.id)
+    // var g= document.querySelector("mapid");
+    // console.log(g)
+    var show_switch;
+    for (var i = 0; i != refresh.length; i++) {
+    show_switch = refresh[i]._events.remove.length;
+        if (a == refresh[i].dragging._marker.options.icon.options.id){
+             if ( show_switch > 1) {
+            
+                mymap.removeLayer(refresh[i])
+             }
+             else{
+                 refresh[i].addTo(mymap);
+             }
+//             var display = refresh[i].dragging._marker.dragging._marker._icon.hidden;
+// 			if (display == false) {
+// 				refresh[i].dragging._marker.dragging._marker._icon.hidden = true;
+// 				console.log(refresh[i].dragging._marker.dragging._marker._icon.hidden)
+// 			}
+// 			else
+// 			{
+// 				display = false;
+// 			}
+        }
+        // refresh.splice(0,1);
+        //console.log(refresh)
+        //refresh_map();
+    }
+    
+}
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+ <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>
+    
+    
+    
+    

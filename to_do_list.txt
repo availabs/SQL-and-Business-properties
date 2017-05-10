@@ -1,0 +1,13 @@
+add to api
+get lat and long data
+take data, make a geo json object by looping
+add geojson object to left
+set view of bounding box and throw your map in there
+geojson.io, feature collection
+geojson - name,NAICS code
+take out replots on map, let plots resize according to map zoom
+
+
+to do what alex said next
+first turn the div into a link
+then associate the markers with a generated tag

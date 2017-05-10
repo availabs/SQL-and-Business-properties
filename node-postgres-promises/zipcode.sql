@@ -1,0 +1,18 @@
+DROP DATABASE IF EXISTS infogroup;
+CREATE DATABASE infogroup;
+
+\c infogroup;
+
+CREATE TABLE geozipcode (
+  ID SERIAL PRIMARY KEY,
+  CONAME VARCHAR,
+  NAICSCD INTEGER,
+  NAICSDS VARCHAR,
+  LEMPSZCD VARCHAR,
+  LEMPSZDS VARCHAR,
+  ALEMPSZ INTEGER,
+  BE_Payroll_Expense_Code VARCHAR,
+  BE_Payroll_Expense_Range VARCHAR,
+  BE_Payroll_Expense_Description VARCHAR
+
+);
