@@ -79,6 +79,7 @@ text-transform: capitalize;
 <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(4);" value = "4 digit">
 <input type="button" class="btn btn-primary" id = "btn" onclick ="getZip(6);" value = "6 digit">
 </div>
+<a href = "./instructions.html" target = "_blank" ><button class="btn btn-primary" style ="position:absolute; top:70px; right:100px;" href = "./instructions.html">How To Use</button></a>
 
 
 <br />
@@ -505,7 +506,7 @@ for (var i = 0; i < a.length; i++)  {
         if (inside == -1) {
             //console.log(inside)
             schema.push(two_places);
-            array_iv += '<a id = '+two_places+' onclick ="remove_select('+two_places+');"><div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div></a>'
+            array_iv += '<a id = '+two_places+' onclick ="remove_select('+two_places+');" style="color:white;"><div style ="background-color:'+paint+'; padding:5px;"> '+two_places+ '   '+ two_digit_name[legend.indexOf(two_places)] +'</div></a>'
             // console.log(array_iv)
             // array_v += two_digit_name[legend.indexOf(two_places)] + "<br />";
             // array_vi += ('<img  src = "box.png" style = "border: 10px solid '+paint+'; z-index:1 width:2px; height:2px;"></img> ' + "<br />");
