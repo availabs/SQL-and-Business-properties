@@ -7,5 +7,19 @@
     "d3-scale": "^1.0.5",
     "express": "~3.1.0",
     "mongoose": "^4.8.5"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/availabs/SQL-and-Business-properties.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/availabs/SQL-and-Business-properties/issues"
+  },
+  "homepage": "https://github.com/availabs/SQL-and-Business-properties#readme"
 }
