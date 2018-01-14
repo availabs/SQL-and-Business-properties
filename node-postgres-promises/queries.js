@@ -9,6 +9,13 @@ var pgp = require('pg-promise')(options);
 var connectionString = 'postgres://postgres:Jedi21funk@mars.availabs.org:5432/infogroup';
 var db = pgp(connectionString);
 
+// app.configure(function() {
+  
+//   app.set('db', db);
+  
+// });
+
+
 // add query functions
 
 
@@ -16,8 +23,8 @@ var db = pgp(connectionString);
 function geobyzip(req, res, next) {
   var zipcode = req.params.zipcode;
   console.log(zipcode);
-  db.many(`select id, ST_ASGeoJSON(ST_transform(geom,4326)), "CONAME", "NAICSCD", 
-       "NAICSDS", "LEMPSZCD", "LEMPSZDS", "ALEMPSZ",  "BE_Payroll_Expense_Code", 
+  db.many(`select id, ST_ASGeoJSON(ST_transform(geom,4326)), "CONAME", "NAICSCD",
+       "NAICSDS", "LEMPSZCD", "LEMPSZDS", "ALEMPSZ",  "BE_Payroll_Expense_Code",
        "BE_Payroll_Expense_Range", "BE_Payroll_Expense_Description" from businesses_2014  where "PRMZIP" = ${zipcode}` )
     .then(function (data) {
       res.status(200)

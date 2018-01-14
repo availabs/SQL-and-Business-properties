@@ -13,6 +13,11 @@ var cors = require('cors');
 
 var app = express();
 
+var db = require('./queries');
+var router = require('./routes/index')
+
+
+
 // view engine setup
 app.use(cors());
 app.set('views', path.join(__dirname, 'views'));
